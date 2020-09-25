@@ -56,9 +56,12 @@
                     <h:outputText rendered="#{member.id ne null}" value="#{member.birthday}">
                         <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
                     </h:outputText>
-                <h:commandButton value="test" action="#{memberRepo.getById(8888)}">
+                <h:commandButton value="test" action="#{memberRepo.getById(member.id)}">
                         <f:ajax execute="@form"/>
                 </h:commandButton>
+                    <h:commandButton value="test2" action="#{memberRepo.getById(88)}">
+                        <f:ajax execute="@form"/>
+                    </h:commandButton>
                 </h:column>
 
             </h:dataTable>

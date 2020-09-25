@@ -6,6 +6,7 @@ import sun.rmi.runtime.Log;
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import javax.transaction.UserTransaction;
 import java.io.Serializable;
 import java.util.List;
@@ -34,23 +35,11 @@ public class MemberRepo implements Serializable {
     public List<Member> getAll() {
         Query getAllQuery = em.createQuery(SELECT_ALL_MEMBERS);
         List<Member> members = getAllQuery.getResultList();
-        if (members != null && members.size() > 0) {
-            return members;
-        }
-        return null;
+        return members;
     }
 
     public Member getById(Integer memberId) {
-        Member member = new Member();
-        Query getByIdQuery = em.createQuery(SELECT_MEMBER_BY_ID);
-        getByIdQuery.setParameter("memberId", memberId);
-        try {
-            member = em.find(com.synergix.model.Member.class, memberId);
-        } catch (NoResultException e) {
-            Logger.getAnonymousLogger().log(Level.INFO, e.getMessage());
-        }
-        System.out.println("member " + member.getId());
-        return member;
+        return em.find(Member.class, memberId);
     }
 
     public void save(Member member) {
