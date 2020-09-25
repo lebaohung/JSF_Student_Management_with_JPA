@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
+<h:body>
+    <ui:composition>
+        <h:form rendered="#{memberBean.navigateMemberPage eq memberBean.getManagerPage()}">
+            <h2>#{msg.MemberManagement}</h2>
+
+            <h:dataTable id="memberTable" binding="#{listMemberTable}" value="#{memberBean.members}"
+                         var="member">
+
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.No}
+                    </f:facet>
+                    <h:outputText rendered="#{member.id ne null}" value="#{listMemberTable.rowIndex + 1}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.MemberID}
+                    </f:facet>
+                    <h:outputText rendered="#{member.id ne null}" value="#{member.id}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.MemberName}
+                    </f:facet>
+                    <h:outputText rendered="#{member.id ne null}" value="#{member.name}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.MemberEmail}
+                    </f:facet>
+                    <h:outputText rendered="#{member.id ne null}" value="#{member.email}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.MemberPhone}
+                    </f:facet>
+                    <h:outputText rendered="#{member.id ne null}" value="#{member.phone}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        Birthday
+                    </f:facet>
+                    <h:outputText rendered="#{member.id ne null}" value="#{member.birthday}">
+                        <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                <h:commandButton value="test" action="#{memberRepo.getById(8888)}">
+                        <f:ajax execute="@form"/>
+                </h:commandButton>
+                </h:column>
+
+            </h:dataTable>
+        </h:form>
+    </ui:composition>
+</h:body>
+</html>
