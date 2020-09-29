@@ -28,12 +28,12 @@ public class MemberRepo implements Serializable {
     private static final String COUNT_MEMBERS = "SELECT COUNT(id) FROM MEMBER;";
     private static final String GET_ALL_MEMBERS_ID = "SELECT id FROM Member m";
 
-    private static final EntityManager em = Persistence.createEntityManagerFactory("Club-Persistence-Unit").createEntityManager();
-    private static final EntityTransaction transaction = em.getTransaction();
+    private EntityManager em = Persistence.createEntityManagerFactory("com.synergix").createEntityManager();
+    private EntityTransaction transaction = em.getTransaction();
 
     @SuppressWarnings("unchecked")
     public List<Member> getAll() {
-        Query getAllQuery = em.createQuery(SELECT_ALL_MEMBERS);
+        TypedQuery<Member> getAllQuery = em.createQuery("FROM Member", Member.class);
         List<Member> members = getAllQuery.getResultList();
         return members;
     }

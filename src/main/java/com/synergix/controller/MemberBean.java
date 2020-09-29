@@ -16,18 +16,17 @@ import java.util.List;
 @ConversationScoped
 public class MemberBean implements Serializable {
 
-    private static final String MANAGER_PAGE = "showManagerPage";
-    private static final String DETAIL_PAGE = "showDetailPage";
-
-    private String navigateMemberPage;
-    private List<Member> members = new ArrayList<>();
-
     @Inject
     private Conversation conversation;
 
     @Inject
     private MemberRepo memberRepo;
 
+    private static final String MANAGER_PAGE = "showManagerPage";
+    private static final String DETAIL_PAGE = "showDetailPage";
+
+    private String navigateMemberPage;
+    private List<Member> members = new ArrayList<>();
     public static String getManagerPage() {
         return MANAGER_PAGE;
     }
