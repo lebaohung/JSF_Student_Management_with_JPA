@@ -40,12 +40,12 @@
             <f:ajax render="@all"/>
         </h:commandButton>
 
-        <ui:fragment rendered="#{homeBean.navigateHomePage eq homeBean.showMemberManagement}">
+        <ui:fragment rendered="#{homeBean.navigateHomePage eq homeBean.getShowMemberManagement()}">
             <ui:include src="/views/listMember.xhtml">
             </ui:include>
         </ui:fragment>
 
-        <ui:fragment rendered="#{homeBean.navigateHomePage eq homeBean.showClubManagement}">
+        <ui:fragment rendered="#{homeBean.navigateHomePage eq homeBean.getShowClubManagement()}">
             <ui:include src="/views/listClub.xhtml">
             </ui:include>
         </ui:fragment>

@@ -29,12 +29,15 @@ public class MemberRepo implements Serializable {
     private static final String GET_ALL_MEMBERS_ID = "SELECT id FROM Member m";
 
     private EntityManager em = Persistence.createEntityManagerFactory("com.synergix").createEntityManager();
-    private EntityTransaction transaction = em.getTransaction();
+    private Member member = null;
 
     @SuppressWarnings("unchecked")
     public List<Member> getAll() {
         TypedQuery<Member> getAllQuery = em.createQuery("FROM Member", Member.class);
+        System.out.println("repo1");
         List<Member> members = getAllQuery.getResultList();
+        member = em.find(Member.class, 1);
+        System.out.println("repo2");
         return members;
     }
 
@@ -42,8 +45,18 @@ public class MemberRepo implements Serializable {
         return em.find(Member.class, memberId);
     }
 
-    public void save(Member member) {
+    public boolean save(Member member) {
+        if (member == null) return false;
+        em.getTransaction().begin();
+        em.persist(member);
+        em.getTransaction().commit();
+        return true;
+    }
 
+    public void test() {
+//        em.find(Member.class, 1);
+//        em.getReference(Member.class, 1);
+        System.out.println(em.contains(member));
     }
 
 

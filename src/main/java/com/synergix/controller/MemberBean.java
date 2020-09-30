@@ -4,8 +4,10 @@ import com.synergix.model.Member;
 import com.synergix.repositoty.MemberRepo;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -21,6 +23,10 @@ public class MemberBean implements Serializable {
 
     @Inject
     private MemberRepo memberRepo;
+
+    public MemberRepo getMemberRepo() {
+        return memberRepo;
+    }
 
     private static final String MANAGER_PAGE = "showManagerPage";
     private static final String DETAIL_PAGE = "showDetailPage";
@@ -52,11 +58,10 @@ public class MemberBean implements Serializable {
     }
 
     public void initConversation() {
-        if (conversation.isTransient()) conversation.begin();
-    }
-
-    public void endConversation() {
-        if (!conversation.isTransient()) conversation.end();
+        if (!conversation.isTransient()) {
+            conversation.end();
+        }
+        conversation.begin();
     }
 
     @PostConstruct
@@ -66,8 +71,8 @@ public class MemberBean implements Serializable {
     }
 
     public void getAll() {
-        this.endConversation();
-        this.initConversation();
         this.members = memberRepo.getAll();
     }
+
+
 }
