@@ -1,7 +1,9 @@
 package com.synergix.controller;
 
+import javax.enterprise.context.Conversation;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Locale;
@@ -9,6 +11,9 @@ import java.util.Locale;
 @Named
 @SessionScoped
 public class HomeBean implements Serializable {
+
+    @Inject
+    private Conversation conversation;
 
     private static final String SHOW_MEMBER_MANAGEMENT = "showMembersManagement";
     private static final String SHOW_CLUB_MANAGEMENT = "showClubsManagement";
@@ -45,15 +50,25 @@ public class HomeBean implements Serializable {
         FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(language));
     }
 
+    public void initConversation() {
+        if (!conversation.isTransient()) {
+            conversation.end();
+        }
+        conversation.begin();
+    }
+
     public void showMemberManagement() {
+        initConversation();
         this.navigateHomePage = SHOW_MEMBER_MANAGEMENT;
     }
 
     public void showClubManagement() {
+        initConversation();
         this.navigateHomePage = SHOW_CLUB_MANAGEMENT;
     }
 
     public void backToHomePage() {
+        conversation.end();
         this.navigateHomePage = null;
     }
 }

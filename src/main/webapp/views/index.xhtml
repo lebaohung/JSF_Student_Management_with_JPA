@@ -5,60 +5,48 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>#{msg['HomeTitle']}</title>
+</h:head>
 <h:body>
-    <ui:composition template="/views/template.xhtml">
+    <h:form>
+        <h:commandButton rendered="#{homeBean.locale eq 'vn'}" action="#{homeBean.changeLanguage('en')}"
+                         value="English">
+            <f:ajax render="@all"/>
+        </h:commandButton>
+        <h:commandButton rendered="#{homeBean.locale eq 'en'}" action="#{homeBean.changeLanguage('vn')}"
+                         value="Tiếng Việt">
+            <f:ajax render="@all"/>
+        </h:commandButton>
 
-        <ui:define name="mainPage">
-            <h:form>
-                <h:commandButton rendered="#{homeBean.locale eq 'vn'}" action="#{homeBean.changeLanguage('en')}"
-                                 value="English">
-                    <f:ajax render="@all"/>
-                </h:commandButton>
-                <h:commandButton rendered="#{homeBean.locale eq 'en'}" action="#{homeBean.changeLanguage('vn')}"
-                                 value="Tiếng Việt">
-                    <f:ajax render="@all"/>
-                </h:commandButton>
+        <h4><h:outputText value="#{msg['HomeTitle']}"/></h4>
 
-                <h4><h:outputText value="#{msg['HomeTitle']}"/></h4>
+        <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showClubManagement}"
+                         value="#{msg['ClubManagement']}"
+                         action="#{homeBean.showClubManagement()}">
+            <f:ajax render="@all"/>
+        </h:commandButton>
+        <br/><br/>
 
-                <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showClubManagement}"
-                                 value="#{msg['ClubManagement']}"
-                                 action="#{homeBean.showClubManagement()}">
-                    <f:ajax render="@all"/>
-                </h:commandButton>
-                <br/><br/>
+        <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showMemberManagement}"
+                         value="#{msg['MemberManagement']}"
+                         action="#{homeBean.showMemberManagement()}">
+            <f:ajax render="@all"/>
+        </h:commandButton>
+        <br/><br/>
 
-                <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showMemberManagement}"
-                                 value="#{msg['MemberManagement']}"
-                                 action="#{homeBean.showMemberManagement()}">
-                    <f:ajax render="@all"/>
-                </h:commandButton>
-                <br/><br/>
+        <h:commandButton rendered="#{homeBean.navigateHomePage ne null}" value="&lt;&lt; #{msg.BackHomeButton}"
+                         action="#{homeBean.backToHomePage}">
+            <f:ajax render="@all"/>
+        </h:commandButton>
+    </h:form>
 
-                <h:commandButton rendered="#{homeBean.navigateHomePage ne null}" value="&lt;&lt; #{msg.BackHomeButton}"
-                                 action="#{homeBean.backToHomePage}">
-                    <f:ajax render="@all"/>
-                </h:commandButton>
-            </h:form>
-        </ui:define>
+    <ui:fragment rendered="#{homeBean.navigateHomePage eq homeBean.getShowMemberManagement()}">
+        <ui:include src="listMember.xhtml"/>
+    </ui:fragment>
 
-        <ui:define name="memberManagement">
-
-            <ui:fragment rendered="#{homeBean.navigateHomePage eq homeBean.getShowMemberManagement()}">
-                <ui:define name="metadataMember">
-                    <f:metadata>
-                        <f:viewAction action="#{memberBean.initConversation}" />
-                    </f:metadata>
-                </ui:define>
-            </ui:fragment>
-        </ui:define>
-
-        <ui:define name="clubManagement">
-            <ui:fragment rendered="#{homeBean.navigateHomePage eq homeBean.getShowClubManagement()}">
-
-            </ui:fragment>
-        </ui:define>
-
-    </ui:composition>
+    <ui:fragment rendered="#{homeBean.navigateHomePage eq homeBean.getShowClubManagement()}">
+        <ui:include src="listClub.xhtml"/>
+    </ui:fragment>
 </h:body>
 </html>
