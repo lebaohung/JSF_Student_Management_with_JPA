@@ -8,6 +8,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -56,6 +57,14 @@ public class MemberBean implements Serializable {
 
     public void setNavigateMemberPage(String navigateMemberPage) {
         this.navigateMemberPage = navigateMemberPage;
+    }
+
+    public Member getTempMember() {
+        return tempMember;
+    }
+
+    public void setTempMember(Member tempMember) {
+        this.tempMember = tempMember;
     }
 
     public List<Member> getMembers() {
