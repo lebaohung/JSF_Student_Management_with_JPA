@@ -36,7 +36,7 @@
         <br/><br/>
 
         <h:commandButton rendered="#{homeBean.navigateHomePage ne null}" value="&lt;&lt; #{msg.BackHomeButton}"
-                         action="#{homeBean.backToHomePage}">
+                         action="#{homeBean.backToHomePage()}">
             <f:ajax render="@all"/>
         </h:commandButton>
     </h:form>

@@ -39,7 +39,7 @@
                                  requiredMessage="Name required!" validator="#{memberBean.validateName}"
                                  p:placeholder="Required" value="#{memberBean.tempMember.name}">
                         <f:ajax event="change" execute="@this" render="@form"/>
-                        <f:converter converterId="nameConverter"/>
+                        <f:converter binding="#{memberBean.nameConverter()}" />
                     </h:inputText>
                 </h:column>
 
@@ -52,7 +52,7 @@
                                  required="false" id="email"
                                  value="#{memberBean.tempMember.email}" validator="#{memberBean.validateEmail}">
                         <f:ajax event="change" execute="@this" render="@form"/>
-                        <f:converter converterId="emailConverter"/>
+                        <f:converter binding="#{memberBean.emailConverter()}" />
                     </h:inputText>
                 </h:column>
 
@@ -147,7 +147,7 @@
                          requiredMessage="Name required!" validator="#{memberBean.validateName}"
                          p:placeholder="Required" value="#{memberBean.tempMember.name}">
                 <f:ajax listener="#{memberBean.update(memberBean.tempMember)}" event="change" execute="@this" render="@all"/>
-                <f:converter converterId="nameConverter"/>
+                <f:converter binding="#{memberBean.nameConverter()}" />
             </h:inputText>
             <br/><br/>
 
@@ -155,7 +155,7 @@
             <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{member.id eq null}" required="false"
                          value="#{memberBean.tempMember.email}" validator="#{memberBean.validateEmail}">
                 <f:ajax listener="#{memberBean.update(memberBean.tempMember)}" event="change" execute="@this" render="@all"/>
-                <f:converter converterId="emailConverter"/>
+                <f:converter binding="#{memberBean.emailConverter()}" />
             </h:inputText>
             <br/><br/>
 

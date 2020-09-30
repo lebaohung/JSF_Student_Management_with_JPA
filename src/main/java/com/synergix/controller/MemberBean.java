@@ -93,34 +93,6 @@ public class MemberBean implements Serializable {
         this.members = memberRepo.getAll();
     }
 
-    public void validateName(FacesContext facesContext, UIComponent component, Object value) throws ValidatorException {
-        String sName = value.toString();
-        if (sName.length() < MINIMUM_LENGTH_NAME) {
-            FacesMessage facesMessage = new FacesMessage("Minimum name length is 2. Please enter again!");
-            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-            tempMember = new Member();
-            throw new ValidatorException(facesMessage);
-        }
-    }
-
-    public void validateEmail(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        String email = value.toString();
-        if (!email.isEmpty() && !email.matches(EMAIL_REGEX)) {
-            FacesMessage facesMessage = new FacesMessage("  Invalid email! Please enter email again!");
-            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-            throw new ValidatorException(facesMessage);
-        }
-    }
-
-    public void validatePhone(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        String phone = value.toString();
-        if (!phone.isEmpty() && !phone.matches(PHONE_REGEX)) {
-            FacesMessage facesMessage = new FacesMessage("Phone length is 10, starts with 0. Please enter again!");
-            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-            throw new ValidatorException(facesMessage);
-        }
-    }
-
     public void create() {
         tempMember = new Member();
         this.getAll();
@@ -182,5 +154,72 @@ public class MemberBean implements Serializable {
 
     public boolean update(Member member) {
         return memberRepo.update(member);
+    }
+
+    public void validateName(FacesContext facesContext, UIComponent component, Object value) throws ValidatorException {
+        String sName = value.toString();
+        if (sName.length() < MINIMUM_LENGTH_NAME) {
+            FacesMessage facesMessage = new FacesMessage("Minimum name length is 2. Please enter again!");
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+            tempMember = new Member();
+            throw new ValidatorException(facesMessage);
+        }
+    }
+
+    public void validateEmail(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        String email = value.toString();
+        if (!email.isEmpty() && !email.matches(EMAIL_REGEX)) {
+            FacesMessage facesMessage = new FacesMessage("  Invalid email! Please enter email again!");
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(facesMessage);
+        }
+    }
+
+    public void validatePhone(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        String phone = value.toString();
+        if (!phone.isEmpty() && !phone.matches(PHONE_REGEX)) {
+            FacesMessage facesMessage = new FacesMessage("Phone length is 10, starts with 0. Please enter again!");
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(facesMessage);
+        }
+    }
+
+    public Converter nameConverter() {
+        return new Converter() {
+            @Override
+            public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
+                s = s.toLowerCase();
+                StringBuilder value2 = new StringBuilder();
+                Character ch = ' ';
+                for (int i = 0; i < s.length(); i ++) {
+                    if (ch == ' ' && s.charAt(i) != ' ') {
+                        value2.append(Character.toUpperCase(s.charAt(i)));
+                    } else {
+                        value2.append(s.charAt(i));
+                    }
+                    ch = s.charAt(i);
+                }
+                return value2.toString().trim();
+            }
+
+            @Override
+            public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object o) {
+                return o.toString();
+            }
+        };
+    }
+
+    public Converter emailConverter() {
+        return new Converter() {
+            @Override
+            public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
+                return s.trim().toLowerCase();
+            }
+
+            @Override
+            public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object o) {
+                return o.toString();
+            }
+        };
     }
 }
