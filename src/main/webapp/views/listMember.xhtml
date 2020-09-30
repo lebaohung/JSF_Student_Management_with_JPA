@@ -6,11 +6,9 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
-<f:metadata>
-    <f:viewAction action="#{memberBean.initConversation()}"/>
-</f:metadata>
 <h:body>
     <ui:composition>
+
         <h:form rendered="#{memberBean.navigateMemberPage eq memberBean.getManagerPage()}">
             <h2>#{msg.MemberManagement}</h2>
 
@@ -62,7 +60,8 @@
                 </h:column>
 
             </h:dataTable>
-            <h:commandButton value="test" action="#{memberBean.memberRepo.test}" >
+            <h:commandButton value="test" action="#{memberBean.memberRepo.test()}">
+                <f:ajax/>
             </h:commandButton>
         </h:form>
     </ui:composition>

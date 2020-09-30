@@ -21,6 +21,10 @@ public class MemberBean implements Serializable {
     @Inject
     private Conversation conversation;
 
+    public Conversation getConversation() {
+        return conversation;
+    }
+
     @Inject
     private MemberRepo memberRepo;
 
@@ -58,16 +62,25 @@ public class MemberBean implements Serializable {
     }
 
     public void initConversation() {
+        System.out.println("ready conversation");
         if (!conversation.isTransient()) {
+            System.out.println("now is transient");
             conversation.end();
         }
+        System.out.println("now is longrunning");
         conversation.begin();
     }
 
     @PostConstruct
     public void initNavigator() {
+        System.out.println("construct");
         this.getAll();
         this.navigateMemberPage = MANAGER_PAGE;
+    }
+
+    @PreDestroy
+    public void testDestroy() {
+        System.out.println("destroy");
     }
 
     public void getAll() {

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>#{msg['HomeTitle']}</title>
+</h:head>
+
+<h:body>
+    <f:view>
+        <ui:insert name="mainPage"/>
+
+        <ui:insert name="metadata"/>
+
+        <ui:insert name="memberManagement">
+            <ui:insert name="metadataMember"/>
+        </ui:insert>
+
+        <ui:insert name="clubManagement"/>
+    </f:view>
+</h:body>
+</html>
