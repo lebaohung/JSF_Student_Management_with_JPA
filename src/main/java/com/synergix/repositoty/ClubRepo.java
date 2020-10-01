@@ -61,15 +61,19 @@ public class ClubRepo implements Serializable {
         return club.getMembers();
     }
 
-    public boolean saveMemberIntoClub(Integer clubId, Integer memberId) {
-        Club club = this.getById(clubId);
-        Member member = memberRepo.getById(memberId);
+    public boolean saveMemberIntoClub(Club club, Member member) {
         if (club == null || member == null) return false;
+        List<Member> members = club.getMembers();
+        members.set(members.size() - 1, member);
+        club.setMembers(members);
         em.getTransaction().begin();
-        club.getMembers().add(member);
         em.merge(club);
         em.getTransaction().commit();
         return true;
+    }
+
+    public Member getMemberById(Integer memberId) {
+        return em.find(Member.class, memberId);
     }
 
     public void updateMentorClub(Club club) {

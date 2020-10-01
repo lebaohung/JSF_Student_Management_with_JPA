@@ -174,11 +174,11 @@ public class ClubBean implements Serializable {
         clubRepo.updateMentorClub(club);
     }
 
-    public void saveMemberIntoClub(Integer clubId, Integer memberId) {
-        if (!clubRepo.saveMemberIntoClub(clubId, memberId)) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Cannot add member for club ID " + clubId);
+    public void saveMemberIntoClub(Club club, Member member) {
+        if (!clubRepo.saveMemberIntoClub(club, member)) {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Cannot add member for club ID " + club);
         }
-        this.cancelAddMember(clubId);
+        this.cancelAddMember(club.getId());
     }
 
     public void selectAllMembers() {
@@ -262,7 +262,7 @@ public class ClubBean implements Serializable {
                 } catch (NumberFormatException e) {
                     return new Member();
                 }
-                return memberRepo.getById(memberId);
+                return clubRepo.getMemberById(memberId);
             }
 
             @Override

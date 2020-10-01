@@ -157,7 +157,7 @@
                                      p:placeholder="Student ID" value="#{clubBean.middleMember}">
                             <f:converter binding="#{clubBean.memberIntoClubConverter()}"/>
                             <f:validator binding="#{clubBean.memberIntoClubValidator()}"/>
-                            <f:ajax listener="#{clubBean.saveMemberIntoClub(clubBean.middleClub.id, clubBean.middleMember.id)}"
+                            <f:ajax listener="#{clubBean.saveMemberIntoClub(clubBean.middleClub, clubBean.middleMember)}"
                                     event="change" execute="@this" render="@form"/>
                         </h:inputText>
                     </h:column>
