@@ -72,15 +72,10 @@ public class ClubRepo implements Serializable {
         return true;
     }
 
-    public boolean updateMentorByClubId(Integer clubId, Integer mentorId) {
-        Club club = this.getById(clubId);
-        Member mentor = memberRepo.getById(mentorId);
-        if (club == null || mentor == null) return false;
-        em.getTransaction();
-        club.setMentor(mentor);
+    public void updateMentorClub(Club club) {
+        em.getTransaction().begin();
         em.merge(club);
         em.getTransaction().commit();
-        return true;
     }
 
     public boolean deleteMemberInClub(Integer clubId, Integer memberId) {

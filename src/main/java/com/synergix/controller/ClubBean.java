@@ -170,10 +170,8 @@ public class ClubBean implements Serializable {
         this.memberListOfClub = clubRepo.getMembersListByClubId(clubId);
     }
 
-    public void updateClubMentor(Integer clubId, Integer memberId) {
-        if (!clubRepo.updateMentorByClubId(clubId, memberId)) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Cannot update mentor for club ID " + clubId);
-        }
+    public void updateMentorClub(Club club) {
+        clubRepo.updateMentorClub(club);
     }
 
     public void saveMemberIntoClub(Integer clubId, Integer memberId) {
@@ -225,7 +223,7 @@ public class ClubBean implements Serializable {
                 try {
                     mentorId = Integer.parseInt(s);
                 } catch (NumberFormatException e) {
-                    return new Member();
+                    return null;
                 }
                 return memberRepo.getById(mentorId);
             }

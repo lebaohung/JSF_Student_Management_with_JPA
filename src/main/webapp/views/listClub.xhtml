@@ -130,7 +130,7 @@
                              p:placeholder="Mentor ID">
                     <f:converter binding="#{clubBean.mentorConverter()}"/>
                     <f:validator binding="#{clubBean.mentorValidator()}"/>
-                    <f:ajax listener="#{clubBean.updateClubMentor(clubBean.middleClub.id, clubBean.middleClub.mentor.id)}"
+                    <f:ajax listener="#{clubBean.updateMentorClub(clubBean.middleClub)}"
                             execute="@this" render="@form"/>
                 </h:inputText>
 
