@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>
+    <ui:composition>
+        <h:form>
+            <h:commandButton rendered="#{homeBean.locale eq 'vn'}" action="#{homeBean.changeLanguage('en')}"
+                             value="English">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+            <h:commandButton rendered="#{homeBean.locale eq 'en'}" action="#{homeBean.changeLanguage('vn')}"
+                             value="Tiếng Việt">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+
+            <h4><h:outputText value="#{msg['HomeTitle']}"/></h4>
+
+            <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showClubManagement}"
+                             value="#{msg['ClubManagement']}"
+                             action="#{homeBean.showClubManagement()}">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+            <br/><br/>
+
+            <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showMemberManagement}"
+                             value="#{msg['MemberManagement']}"
+                             action="#{homeBean.showMemberManagement()}">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+            <br/><br/>
+
+            <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showMainManager}" value="&lt;&lt; #{msg.BackHomeButton}"
+                             action="#{homeBean.backToHomePage()}">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+        </h:form>
+    </ui:composition>
+</h:body>
+</html>

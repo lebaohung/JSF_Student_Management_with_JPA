@@ -1,5 +1,6 @@
 package com.synergix.controller;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -15,9 +16,12 @@ public class HomeBean implements Serializable {
     @Inject
     private Conversation conversation;
 
-    private static final String SHOW_MEMBER_MANAGEMENT = "showMembersManagement";
-    private static final String SHOW_CLUB_MANAGEMENT = "showClubsManagement";
+    private static final String SHOW_MEMBER_MANAGEMENT = "listMember";
+    private static final String SHOW_CLUB_MANAGEMENT = "listClub";
+    private static final String SHOW_MAIN_MANAGER = "managerTemplate";
+
     private String navigateHomePage;
+    private Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 
     public String getShowMemberManagement() {
         return SHOW_MEMBER_MANAGEMENT;
@@ -25,6 +29,10 @@ public class HomeBean implements Serializable {
 
     public String getShowClubManagement() {
         return SHOW_CLUB_MANAGEMENT;
+    }
+
+    public String getShowMainManager() {
+        return SHOW_MAIN_MANAGER;
     }
 
     public String getNavigateHomePage() {
@@ -35,10 +43,13 @@ public class HomeBean implements Serializable {
         this.navigateHomePage = navigateHomePage;
     }
 
-    private Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-
     public Locale getLocale() {
         return locale;
+    }
+
+    @PostConstruct
+    public void init() {
+        this.navigateHomePage = SHOW_MAIN_MANAGER;
     }
 
     public String getLanguage() {
@@ -69,6 +80,6 @@ public class HomeBean implements Serializable {
 
     public void backToHomePage() {
         conversation.end();
-        this.navigateHomePage = null;
+        this.navigateHomePage = SHOW_MAIN_MANAGER;
     }
 }

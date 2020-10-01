@@ -28,10 +28,6 @@ public class MemberBean implements Serializable {
     @Inject
     private MemberRepo memberRepo;
 
-    public MemberRepo getMemberRepo() {
-        return memberRepo;
-    }
-
     private static final String MANAGER_PAGE = "showManagerPage";
     private static final String DETAIL_PAGE = "showDetailPage";
     private static final int MINIMUM_LENGTH_NAME = 2;
@@ -85,6 +81,7 @@ public class MemberBean implements Serializable {
 
     @PostConstruct
     public void initNavigator() {
+        this.tempMember = null;
         this.getAll();
         this.navigateMemberPage = MANAGER_PAGE;
     }
@@ -95,23 +92,24 @@ public class MemberBean implements Serializable {
 
     public void create() {
         tempMember = new Member();
-        this.getAll();
         members.add(tempMember);
     }
 
     public void cancelAdd() {
         this.clearTempMember();
-        this.getAll();
+        members.remove(members.size()-1);
     }
 
     public void clearTempMember() {
         tempMember = null;
     }
 
-    public boolean save(Member member) {
-        boolean result = memberRepo.save(member);
-        this.cancelAdd();
-        return result;
+    public void save(Member member) {
+        if (!memberRepo.save(member)) {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Cannot save member ID " + member.getId());
+        }
+        this.clearTempMember();
+        this.getAll();
     }
 
     public List<Integer> getSelectedMemberList() {
@@ -122,17 +120,16 @@ public class MemberBean implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    public boolean deleteSelectedMember() {
+    public void deleteSelectedMember() {
         boolean result = true;
         for (Integer memberId : this.getSelectedMemberList()) {
             result = memberRepo.delete(memberId);
         }
         this.getAll();
         this.selectedMemberMap.clear();
-        if (result) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Check log----------------------");
+        if (!result) {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Cannot delete all selected member!");
         }
-        return result;
     }
 
     public void selectAll() {
@@ -152,8 +149,10 @@ public class MemberBean implements Serializable {
         this.navigateMemberPage = DETAIL_PAGE;
     }
 
-    public boolean update(Member member) {
-        return memberRepo.update(member);
+    public void update(Member member) {
+        if (!memberRepo.update(member)) {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Cannot save member!");
+        };
     }
 
     public void validateName(FacesContext facesContext, UIComponent component, Object value) throws ValidatorException {
