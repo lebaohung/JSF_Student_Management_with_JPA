@@ -20,14 +20,15 @@ public class ClubRepo implements Serializable {
     private EntityManager em = Persistence.createEntityManagerFactory("com.synergix").createEntityManager();
     
     public List<Club> getAll() {
-        TypedQuery<Club> getAllClubs = em.createQuery("FROM Club", Club.class);
+        TypedQuery<Club> getAllClubs = em.createQuery("select distinct c from Club c left join fetch c.mentor left join fetch c.members order by c.id ", Club.class);
         return getAllClubs.getResultList();
     }
 
     public Club getById(Integer clubId) {
-        TypedQuery<Club> getClubQuery = em.createQuery("select c from Club c join fetch c.mentor join fetch c.members where c.id = ?1", Club.class);
-        getClubQuery.setParameter(1, clubId);
-        return getClubQuery.getSingleResult();
+//        TypedQuery<Club> getClubQuery = em.createQuery("select c from Club c join fetch c.mentor join fetch c.members where c.id = ?1", Club.class);
+//        getClubQuery.setParameter(1, clubId);
+//        return getClubQuery.getSingleResult();
+        return em.find(Club.class, clubId);
     }
 
     public boolean save(Club club) {
