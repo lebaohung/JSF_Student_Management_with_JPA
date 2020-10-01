@@ -16,6 +16,10 @@ public class HomeBean implements Serializable {
     @Inject
     private Conversation conversation;
 
+    public String getConversationId() {
+        return this.conversation.getId();
+    }
+
     private static final String SHOW_MEMBER_MANAGEMENT = "listMember";
     private static final String SHOW_CLUB_MANAGEMENT = "listClub";
     private static final String SHOW_MAIN_MANAGER = "managerTemplate";
@@ -79,7 +83,7 @@ public class HomeBean implements Serializable {
     }
 
     public void backToHomePage() {
-        conversation.end();
+        if (!conversation.isTransient()) conversation.end();
         this.navigateHomePage = SHOW_MAIN_MANAGER;
     }
 }

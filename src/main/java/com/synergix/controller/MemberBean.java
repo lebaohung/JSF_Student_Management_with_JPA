@@ -2,6 +2,8 @@ package com.synergix.controller;
 
 import com.synergix.model.Member;
 import com.synergix.repositoty.MemberRepo;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 
 @Named
 @ConversationScoped
+@Getter
+@Setter
 public class MemberBean implements Serializable {
 
     @Inject
@@ -39,44 +43,12 @@ public class MemberBean implements Serializable {
     private Map<Integer, Boolean> selectedMemberMap = new HashMap<>();
     private Member tempMember;
 
-    public static String getManagerPage() {
+    public String getManagerPage() {
         return MANAGER_PAGE;
     }
 
-    public static String getDetailPage() {
+    public String getDetailPage() {
         return DETAIL_PAGE;
-    }
-
-    public String getNavigateMemberPage() {
-        return navigateMemberPage;
-    }
-
-    public void setNavigateMemberPage(String navigateMemberPage) {
-        this.navigateMemberPage = navigateMemberPage;
-    }
-
-    public Member getTempMember() {
-        return tempMember;
-    }
-
-    public void setTempMember(Member tempMember) {
-        this.tempMember = tempMember;
-    }
-
-    public List<Member> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<Member> members) {
-        this.members = members;
-    }
-
-    public Map<Integer, Boolean> getSelectedMemberMap() {
-        return selectedMemberMap;
-    }
-
-    public void setSelectedMemberMap(Map<Integer, Boolean> selectedMemberMap) {
-        this.selectedMemberMap = selectedMemberMap;
     }
 
     @PostConstruct
@@ -112,6 +84,18 @@ public class MemberBean implements Serializable {
         this.getAll();
     }
 
+    public void selectAll() {
+        for (Member member : this.getMembers()) {
+            selectedMemberMap.put(member.getId(), true);
+        }
+    }
+
+    public void unselectAll() {
+        for (Member member : this.getMembers()) {
+            selectedMemberMap.put(member.getId(), false);
+        }
+    }
+
     public List<Integer> getSelectedMemberList() {
         return this.getSelectedMemberMap().entrySet()
                 .stream()
@@ -129,18 +113,6 @@ public class MemberBean implements Serializable {
         this.selectedMemberMap.clear();
         if (!result) {
             Logger.getAnonymousLogger().log(Level.SEVERE, "Cannot delete all selected member!");
-        }
-    }
-
-    public void selectAll() {
-        for (Member member : this.getMembers()) {
-            selectedMemberMap.put(member.getId(), true);
-        }
-    }
-
-    public void unselectAll() {
-        for (Member member : this.getMembers()) {
-            selectedMemberMap.put(member.getId(), false);
         }
     }
 

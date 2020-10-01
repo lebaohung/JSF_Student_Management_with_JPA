@@ -1,13 +1,17 @@
 package com.synergix.model;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
+
 @Entity
 @Table(name = "club")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class Club {
 
     @Id
@@ -17,7 +21,7 @@ public class Club {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mentor_id")
     private Member mentor;
 
