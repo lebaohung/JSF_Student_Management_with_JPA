@@ -28,7 +28,7 @@ public class Club {
     @JoinColumn(name = "mentor_id")
     private Member mentor;
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name = "member_club", joinColumns = {@JoinColumn(name = "club_id")}, inverseJoinColumns = {@JoinColumn(name = "member_id")})
     private List<Member> members;
 }

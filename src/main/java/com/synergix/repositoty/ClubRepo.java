@@ -16,9 +16,9 @@ import java.util.logging.Logger;
 public class ClubRepo implements Serializable {
 
     private EntityManager em = Persistence.createEntityManagerFactory("com.synergix").createEntityManager();
-    
+
     public List<Club> getAll() {
-        TypedQuery<Club> getAllClubs = em.createQuery("select distinct c from Club c left join fetch c.mentor left join fetch c.members order by c.id ", Club.class);
+        TypedQuery<Club> getAllClubs = em.createQuery("from Club ", Club.class);
         return getAllClubs.getResultList();
     }
 
@@ -61,11 +61,6 @@ public class ClubRepo implements Serializable {
         }
     }
 
-    public List<Member> getMembersListByClubId(Integer clubId) {
-        Club club = this.getById(clubId);
-        return club.getMembers();
-    }
-
     public void saveMemberIntoClub(Club club, Member member) {
         try {
             em.getTransaction().begin();
@@ -89,14 +84,17 @@ public class ClubRepo implements Serializable {
         em.getTransaction().commit();
     }
 
-    public boolean deleteMemberInClub(Integer clubId, Integer memberId) {
-        Club club = this.getById(clubId);
-        Member member = this.getMemberById(memberId);
-        if (club == null || member == null) return false;
-        em.getTransaction().begin();
-        club.getMembers().remove(member);
-        em.merge(club);
-        em.getTransaction().commit();
-        return true;
+    public void deleteMemberInClub(Integer clubId, Integer memberId) {
+        try {
+            em.getTransaction().begin();
+            Club club = this.getById(clubId);
+            Member member = this.getMemberById(memberId);
+            club.getMembers().remove(member);
+            em.merge(club);
+            em.getTransaction().commit();
+        } catch  (Exception e) {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Exception " + e.getMessage());
+        }
     }
+
 }

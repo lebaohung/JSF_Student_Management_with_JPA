@@ -133,10 +133,6 @@ public class ClubBean implements Serializable {
         clubRepo.update(club);
     }
 
-    public void clearMemberListOfClub() {
-        this.memberListOfClub.clear();
-    }
-
     public void clearSelectedMemberMap() {
         this.selectedMemberMap.clear();
     }
