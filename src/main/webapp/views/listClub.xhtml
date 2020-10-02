@@ -77,7 +77,7 @@
                     </h:column>
                 </h:dataTable>
 
-                <h:messages infoStyle="color: green" errorStyle="color: darkred" layout="table"/>
+                <h:messages id="clubList" infoStyle="color: green" errorStyle="color: darkred" layout="table"/>
 
                 <h:commandButton value="Delete selected"
                                  disabled="#{!clubBean.selectedClubMap.containsValue(true)}"
@@ -122,7 +122,7 @@
                 <br/>
 
                 <h:outputText value="#{msg.Size}: "/>
-                <h:outputText value="#{club.members.size()}"/>
+                <h:outputText value="#{clubBean.middleClub.members.size()}"/>
                 <br/>
 
                 <h:outputText value="Mentor: "/>
@@ -137,7 +137,7 @@
                 <h:outputText value="  #{clubBean.middleClub.mentor.name}">
                 </h:outputText>
 
-                <h:messages infoStyle="color: green" errorStyle="color: #c21b1b" layout="table"/>
+                <h:messages id="clubDetail" infoStyle="color: green" errorStyle="color: #c21b1b" layout="table"/>
 
                 <h:dataTable binding="#{memberInClub}" value="#{clubBean.memberListOfClub}"
                              var="member">
@@ -145,7 +145,7 @@
                         <f:facet name="header">
                             #{msg.No}
                         </f:facet>
-                        <h:outputText value="#{mebberInClub.rowIndex + 1}"/>
+                        <h:outputText value="#{memberInClub.rowIndex + 1}"/>
                     </h:column>
 
                     <h:column>
@@ -187,17 +187,17 @@
                             <h:commandButton
                                     rendered="#{clubBean.selectedMemberMap.isEmpty() or clubBean.selectedMemberMap.containsValue(false)}"
                                     value="Select All" action="#{clubBean.selectAllMembers()}">
-                                <f:ajax event="click" render="@form"/>
+                                <f:ajax render="@form"/>
                             </h:commandButton>
                             <h:commandButton
                                     rendered="#{!clubBean.selectedMemberMap.isEmpty() and !clubBean.selectedMemberMap.containsValue(false)}"
                                     value="Unselect All" action="#{clubBean.unselectAllMembers()}">
-                                <f:ajax event="click" render="@form"/>
+                                <f:ajax render="@form"/>
                             </h:commandButton>
                         </f:facet>
                         <h:selectBooleanCheckbox rendered="#{member.id ne null}"
                                                  value="#{clubBean.selectedMemberMap[member.id]}">
-                            <f:ajax execute="@this" render="@form"/>
+                            <f:ajax execute="@form" render="@form"/>
                         </h:selectBooleanCheckbox>
                         <br/>
                     </h:column>

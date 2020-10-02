@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Named(value = "clubBean")
@@ -64,9 +62,7 @@ public class ClubBean implements Serializable {
     @PostConstruct
     public void initNavigator() {
         this.clearMiddleClub();
-        this.middleMember = null;
-        this.clearMemberListOfClub();
-        this.clearSelectedMemberMap();
+        this.unselectAll();
         this.getAll();
         this.navigateClubPage = MANAGER_PAGE;
     }
@@ -77,22 +73,21 @@ public class ClubBean implements Serializable {
 
     public void create() {
         middleClub = new Club();
+        middleClub.setMembers(new ArrayList<>());
         clubs.add(middleClub);
     }
 
     public void cancelAdd() {
         this.clearMiddleClub();
-        clubs.remove(clubs.size()-1);
+        this.clubs.remove(clubs.size()-1);
     }
 
     public void clearMiddleClub() {
-        middleClub = null;
+        this.middleClub = null;
     }
 
     public void save(Club club) {
-        if (!clubRepo.save(club)) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Cannot save club ID " + club.getId());
-        }
+        clubRepo.save(club);
         this.clearMiddleClub();
         this.getAll();
     }
@@ -118,34 +113,25 @@ public class ClubBean implements Serializable {
     }
 
     public void deleteSelectedClub() {
-        boolean result = true;
         for (Integer clubId : this.getSelectedClubList()) {
-            result = clubRepo.delete(clubId);
+            clubRepo.delete(clubId);
         }
         this.getAll();
-        this.selectedClubMap.clear();
-        if (!result) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Cannot delete all selected club!");
-        }
+        this.unselectAll();
     }
 
     public void moveToDetailPage(Club club) {
-        this.middleClub = clubRepo.getById(club.getId());
+        this.middleClub = club;
+        this.middleMember = null;
         this.clearSelectedMemberMap();
-        this.memberListOfClub = clubRepo.getMembersListByClubId(club.getId());
-        this.membersIdListOfClub = this.memberListOfClub
-                .stream()
-                .map(Member::getId)
-                .collect(Collectors.toList());
+        this.memberListOfClub = this.middleClub.getMembers();
+        this.getMembersIdListOfClub();
         this.navigateClubPage = DETAIL_PAGE;
     }
 
     public void update(Club club) {
-        if (!clubRepo.update(club)) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Cannot save club!");
-        };
+        clubRepo.update(club);
     }
-
 
     public void clearMemberListOfClub() {
         this.memberListOfClub.clear();
@@ -155,19 +141,14 @@ public class ClubBean implements Serializable {
         this.selectedMemberMap.clear();
     }
 
-    public void addMember() {
-        this.middleMember = new Member();
-        this.memberListOfClub.add(middleMember);
-    }
-
     public void createMember() {
         middleMember = new Member();
         this.memberListOfClub.add(middleMember);
     }
 
-    public void cancelAddMember(Integer clubId) {
+    public void cancelAddMember() {
         this.middleMember = null;
-        this.memberListOfClub = clubRepo.getMembersListByClubId(clubId);
+        this.memberListOfClub.remove(this.memberListOfClub.size() -1);
     }
 
     public void updateMentorClub(Club club) {
@@ -175,10 +156,16 @@ public class ClubBean implements Serializable {
     }
 
     public void saveMemberIntoClub(Club club, Member member) {
-        if (!clubRepo.saveMemberIntoClub(club, member)) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Cannot add member for club ID " + club);
-        }
-        this.cancelAddMember(club.getId());
+        clubRepo.saveMemberIntoClub(club, member);
+        this.middleMember = null;
+        this.memberListOfClub = club.getMembers();
+    }
+
+    public List<Integer> getMembersIdListOfClub() {
+        return this.memberListOfClub
+                .stream()
+                .map(Member::getId)
+                .collect(Collectors.toList());
     }
 
     public void selectAllMembers() {
@@ -189,12 +176,20 @@ public class ClubBean implements Serializable {
 
     public void unselectAllMembers() {
         for (Integer memberId : this.getMembersIdListOfClub()) {
-            selectedMemberMap.put(memberId, true);
+            selectedMemberMap.put(memberId, false);
         }
     }
 
+    public List<Integer> getSelectedMembersId() {
+        return this.selectedMemberMap.entrySet()
+                .stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
+
     public void deleteSelectedMember(Club club) {
-        for (Integer memberId : this.getMembersIdListOfClub()) {
+        for (Integer memberId : this.getSelectedMembersId()) {
             clubRepo.deleteMemberInClub(club.getId(), memberId);
         }
         this.moveToDetailPage(club);
@@ -219,13 +214,13 @@ public class ClubBean implements Serializable {
             @Override
             public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
                 Integer mentorId = null;
-                if (s.isEmpty() || s == null) return null;
+                if (s.isEmpty() || s == null) return new Member();
                 try {
                     mentorId = Integer.parseInt(s);
                 } catch (NumberFormatException e) {
                     return null;
                 }
-                return memberRepo.getById(mentorId);
+                return clubRepo.getMemberById(mentorId);
             }
 
             @Override
@@ -242,7 +237,7 @@ public class ClubBean implements Serializable {
             @Override
             public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
                 Member member = (Member) value;
-                if (value != null && !membersIdListOfClub.contains(member.getId())) {
+                if (value == null || (!member.equals(new Member()) && !memberListOfClub.contains(member))) {
                     EditableValueHolder editableValueHolder = (EditableValueHolder) component;
                     editableValueHolder.resetValue();
                     FacesMessage notFoundIdMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, NOT_FOUND_MEMBER, null);
@@ -256,11 +251,12 @@ public class ClubBean implements Serializable {
         return new Converter() {
             @Override
             public Object getAsObject(FacesContext context, UIComponent component, String value) {
+                if (value.isEmpty() || value == null) return null;
                 Integer memberId = null;
                 try {
                     memberId = Integer.parseInt(value);
                 } catch (NumberFormatException e) {
-                    return new Member();
+                    return null;
                 }
                 return clubRepo.getMemberById(memberId);
             }
@@ -279,15 +275,12 @@ public class ClubBean implements Serializable {
             @Override
             public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
                 Member member = (Member) value;
-                List<Integer> memberIdList = memberRepo.getAll()
-                        .stream()
-                        .map(Member::getId)
-                        .collect(Collectors.toList());
-                if (membersIdListOfClub.contains(member.getId())) {
-                    cancelAddMember(middleMember.getId());
+                List<Member> memberList = memberRepo.getAll();
+                if (value != null && memberListOfClub.contains(member)) {
+                    cancelAddMember();
                     throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Member existed in club", null));
-                } else if (!memberIdList.contains(member.getId())) {
-                    cancelAddMember(middleMember.getId());
+                } else if (value == null || !memberList.contains(member)) {
+                    cancelAddMember();
                     throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, NOT_FOUND_MEMBER, null));
                 }
             }

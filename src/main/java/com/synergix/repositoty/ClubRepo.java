@@ -3,19 +3,17 @@ package com.synergix.repositoty;
 import com.synergix.model.Club;
 import com.synergix.model.Member;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Named(value = "clubRepo")
 public class ClubRepo implements Serializable {
-    
-    @Inject
-    private MemberRepo memberRepo;
 
     private EntityManager em = Persistence.createEntityManagerFactory("com.synergix").createEntityManager();
     
@@ -25,35 +23,42 @@ public class ClubRepo implements Serializable {
     }
 
     public Club getById(Integer clubId) {
-//        TypedQuery<Club> getClubQuery = em.createQuery("select c from Club c join fetch c.mentor join fetch c.members where c.id = ?1", Club.class);
-//        getClubQuery.setParameter(1, clubId);
-//        return getClubQuery.getSingleResult();
         return em.find(Club.class, clubId);
     }
 
-    public boolean save(Club club) {
-        if (club == null) return false;
-        em.getTransaction().begin();
-        em.persist(club);
-        em.getTransaction().commit();
-        return true;
+    public void refreshClub(Club club) {
+        em.refresh(club);
     }
 
-    public boolean update(Club club) {
-        if (club == null) return false;
-        em.getTransaction().begin();
-        em.merge(club);
-        em.getTransaction().commit();
-        return true;
+    public void save(Club club) {
+        try {
+            em.getTransaction().begin();
+            em.persist(club);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Exception " + e.getMessage());
+        }
     }
 
-    public boolean delete(Integer clubId) {
-        Club club = this.getById(clubId);
-        if (club == null) return false;
-        em.getTransaction().begin();
-        em.remove(club);
-        em.getTransaction().commit();
-        return true;
+    public void update(Club club) {
+        try {
+            em.getTransaction().begin();
+            em.merge(club);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Exception " + e.getMessage());
+        }
+    }
+
+    public void delete(Integer clubId) {
+        try {
+            em.getTransaction().begin();
+            Club club = this.getById(clubId);
+            em.remove(club);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Exception " + e.getMessage());
+        }
     }
 
     public List<Member> getMembersListByClubId(Integer clubId) {
@@ -61,15 +66,17 @@ public class ClubRepo implements Serializable {
         return club.getMembers();
     }
 
-    public boolean saveMemberIntoClub(Club club, Member member) {
-        if (club == null || member == null) return false;
-        List<Member> members = club.getMembers();
-        members.set(members.size() - 1, member);
-        club.setMembers(members);
-        em.getTransaction().begin();
-        em.merge(club);
-        em.getTransaction().commit();
-        return true;
+    public void saveMemberIntoClub(Club club, Member member) {
+        try {
+            em.getTransaction().begin();
+            List<Member> newMembers = club.getMembers();
+            newMembers.set(newMembers.size() - 1, member);
+            club.setMembers(newMembers);
+            em.merge(club);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Exception " + e.getMessage());
+        }
     }
 
     public Member getMemberById(Integer memberId) {
@@ -84,7 +91,7 @@ public class ClubRepo implements Serializable {
 
     public boolean deleteMemberInClub(Integer clubId, Integer memberId) {
         Club club = this.getById(clubId);
-        Member member = memberRepo.getById(memberId);
+        Member member = this.getMemberById(memberId);
         if (club == null || member == null) return false;
         em.getTransaction().begin();
         club.getMembers().remove(member);
