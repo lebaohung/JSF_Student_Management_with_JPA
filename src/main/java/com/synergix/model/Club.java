@@ -14,7 +14,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 public class Club {
 
     @Id
@@ -28,7 +27,10 @@ public class Club {
     @JoinColumn(name = "mentor_id")
     private Member mentor;
 
-    @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.PERSIST)
     @JoinTable(name = "member_club", joinColumns = {@JoinColumn(name = "club_id")}, inverseJoinColumns = {@JoinColumn(name = "member_id")})
     private List<Member> members;
+
+    @OneToMany
+    private List<MemberClub> memberClubs;
 }

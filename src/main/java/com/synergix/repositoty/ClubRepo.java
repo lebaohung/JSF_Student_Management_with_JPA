@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 public class ClubRepo implements Serializable {
 
     private EntityManager em = Persistence.createEntityManagerFactory("com.synergix").createEntityManager();
+    private Logger logger = Logger.getAnonymousLogger();
 
     public List<Club> getAll() {
         TypedQuery<Club> getAllClubs = em.createQuery("from Club ", Club.class);
@@ -26,17 +27,13 @@ public class ClubRepo implements Serializable {
         return em.find(Club.class, clubId);
     }
 
-    public void refreshClub(Club club) {
-        em.refresh(club);
-    }
-
     public void save(Club club) {
         try {
             em.getTransaction().begin();
             em.persist(club);
             em.getTransaction().commit();
         } catch (Exception e) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Exception " + e.getMessage());
+            logger.log(Level.SEVERE, "Exception " + e.getMessage());
         }
     }
 
@@ -46,7 +43,7 @@ public class ClubRepo implements Serializable {
             em.merge(club);
             em.getTransaction().commit();
         } catch (Exception e) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Exception " + e.getMessage());
+            logger.log(Level.SEVERE, "Exception " + e.getMessage());
         }
     }
 
@@ -57,7 +54,7 @@ public class ClubRepo implements Serializable {
             em.remove(club);
             em.getTransaction().commit();
         } catch (Exception e) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Exception " + e.getMessage());
+            logger.log(Level.SEVERE, "Exception " + e.getMessage());
         }
     }
 
@@ -70,7 +67,7 @@ public class ClubRepo implements Serializable {
             em.merge(club);
             em.getTransaction().commit();
         } catch (Exception e) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Exception " + e.getMessage());
+            logger.log(Level.SEVERE, "Exception " + e.getMessage());
         }
     }
 
@@ -93,8 +90,7 @@ public class ClubRepo implements Serializable {
             em.merge(club);
             em.getTransaction().commit();
         } catch  (Exception e) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Exception " + e.getMessage());
+            logger.log(Level.SEVERE, "Exception " + e.getMessage());
         }
     }
-
 }
