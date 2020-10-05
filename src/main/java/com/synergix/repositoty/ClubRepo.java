@@ -59,12 +59,9 @@ public class ClubRepo implements Serializable {
         }
     }
 
-    public void saveMemberClubIntoClub(Club club, MemberClub member) {
+    public void saveMemberClubIntoClub(Club club) {
         try {
             em.getTransaction().begin();
-            List<MemberClub> newMembers = club.getMemberClubs();
-            newMembers.set(newMembers.size() - 1, member);
-            club.setMemberClubs(newMembers);
             em.merge(club);
             em.getTransaction().commit();
         } catch (Exception e) {

@@ -153,10 +153,10 @@
                         </f:facet>
                         <h:outputText rendered="#{memberClub.id ne null}" value="#{memberClub.member.id}"/>
                         <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{memberClub.id eq null}"
-                                     p:placeholder="Student ID" value="#{memberClub}">
+                                     p:placeholder="Student ID" value="#{memberClub.member}">
                             <f:converter binding="#{clubBean.memberIntoClubConverter()}"/>
                             <f:validator binding="#{clubBean.memberIntoClubValidator()}"/>
-                            <f:ajax listener="#{clubBean.saveMemberClubIntoClub(clubBean.middleClub, memberClub)}"
+                            <f:ajax listener="#{clubBean.saveMemberClubIntoClub(clubBean.middleClub)}"
                                     event="change" execute="@this" render="@form"/>
                         </h:inputText>
                     </h:column>
@@ -206,7 +206,7 @@
                 </h:commandButton>
 
                 <h:commandButton rendered="#{memberClub.id eq null}" value="#{msg.AddMember}"
-                                 action="#{clubBean.createMember}">
+                                 action="#{clubBean.createMember()}">
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
             </h:form>

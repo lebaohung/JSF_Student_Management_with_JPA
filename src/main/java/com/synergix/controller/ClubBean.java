@@ -126,7 +126,7 @@ public class ClubBean implements Serializable {
         this.middleMember = null;
         this.clearSelectedMemberMap();
         this.memberClubsList = this.middleClub.getMemberClubs();
-        this.memberIdList = this.getMemberIdList();
+        this.setMemberIdList();
         this.navigateClubPage = DETAIL_PAGE;
     }
 
@@ -139,12 +139,10 @@ public class ClubBean implements Serializable {
     }
 
     public void createMember() {
-        middleMember = new Member();
         this.memberClubsList.add(new MemberClub());
     }
 
     public void cancelAddMember() {
-        this.middleMember = null;
         this.memberClubsList.remove(this.memberClubsList.size() -1);
     }
 
@@ -152,16 +150,15 @@ public class ClubBean implements Serializable {
         clubRepo.updateMentorClub(club);
     }
 
-    public void saveMemberClubIntoClub(Club club, MemberClub memberClub) {
-        clubRepo.saveMemberClubIntoClub(club, memberClub);
-        this.middleMember = null;
+    public void saveMemberClubIntoClub(Club club) {
+        clubRepo.saveMemberClubIntoClub(club);
         this.memberClubsList = club.getMemberClubs();
     }
 
-    public List<Integer> getMemberIdList() {
-        return this.memberClubsList
+    public void setMemberIdList() {
+        this.memberIdList =  this.memberClubsList
                 .stream()
-                .map( item -> item.getMember().getId())
+                .map(item -> item.getMember().getId())
                 .collect(Collectors.toList());
     }
 
@@ -255,14 +252,14 @@ public class ClubBean implements Serializable {
                 } catch (NumberFormatException e) {
                     return null;
                 }
-                return clubRepo.getMemberClubById(memberId);
+                return clubRepo.getMemberById(memberId);
             }
 
             @Override
             public String getAsString(FacesContext context, UIComponent component, Object value) {
-                MemberClub memberClub = (MemberClub) value;
-                if (memberClub.getMember().getId() == null) return null;
-                return memberClub.getMember().getId().toString();
+                Member member = (Member) value;
+                if (member == null ) return null;
+                return member.getId().toString();
             }
         };
     }
@@ -271,10 +268,9 @@ public class ClubBean implements Serializable {
         return new Validator() {
             @Override
             public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-                MemberClub memberClub = (MemberClub) value;
-                Member member = clubRepo.getMemberById(memberClub.getMember().getId());
+                Member member = (Member) value;
                 List<Member> memberList = memberRepo.getAll();
-                if (value != null && memberClubsList.contains(memberClub)) {
+                if (value != null && memberIdList.contains(member.getId())) {
                     cancelAddMember();
                     throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Member existed in club", null));
                 } else if (value == null || !memberList.contains(member)) {
