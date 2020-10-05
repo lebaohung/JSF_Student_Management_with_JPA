@@ -139,7 +139,9 @@ public class ClubBean implements Serializable {
     }
 
     public void createMember() {
-        this.memberClubsList.add(new MemberClub());
+        MemberClub memberClub = new MemberClub();
+        memberClub.setClub(middleClub);
+        this.memberClubsList.add(memberClub);
     }
 
     public void cancelAddMember() {
