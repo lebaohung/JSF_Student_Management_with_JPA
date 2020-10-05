@@ -14,28 +14,28 @@
                 <h2>#{msg.MemberManagement}</h2>
 
                 <h:dataTable id="memberTable" binding="#{listMemberTable}"
-                             value="#{memberBean.members}" var="member">
+                             value="#{memberBean.members}" var="memberClub">
 
                     <h:column>
                         <f:facet name="header">
                             #{msg.No}
                         </f:facet>
-                        <h:outputText rendered="#{member.id ne null}" value="#{listMemberTable.rowIndex + 1}"/>
+                        <h:outputText rendered="#{memberClub.id ne null}" value="#{listMemberTable.rowIndex + 1}"/>
                     </h:column>
 
                     <h:column>
                         <f:facet name="header">
                             #{msg.MemberID}
                         </f:facet>
-                        <h:outputText rendered="#{member.id ne null}" value="#{member.id}"/>
+                        <h:outputText rendered="#{memberClub.id ne null}" value="#{memberClub.id}"/>
                     </h:column>
 
                     <h:column>
                         <f:facet name="header">
                             #{msg.MemberName}
                         </f:facet>
-                        <h:outputText rendered="#{member.id ne null}" value="#{member.name}"/>
-                        <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{member.id eq null}"
+                        <h:outputText rendered="#{memberClub.id ne null}" value="#{memberClub.name}"/>
+                        <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{memberClub.id eq null}"
                                      required="true"
                                      requiredMessage="Name required!" validator="#{memberBean.validateName}"
                                      p:placeholder="Required" value="#{memberBean.tempMember.name}">
@@ -48,8 +48,8 @@
                         <f:facet name="header">
                             #{msg.MemberEmail}
                         </f:facet>
-                        <h:outputText rendered="#{member.id ne null}" value="#{member.email}"/>
-                        <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{member.id eq null}"
+                        <h:outputText rendered="#{memberClub.id ne null}" value="#{memberClub.email}"/>
+                        <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{memberClub.id eq null}"
                                      required="false" id="email"
                                      value="#{memberBean.tempMember.email}" validator="#{memberBean.validateEmail}">
                             <f:ajax event="change" execute="@this" render="@form"/>
@@ -61,8 +61,8 @@
                         <f:facet name="header">
                             #{msg.MemberPhone}
                         </f:facet>
-                        <h:outputText rendered="#{member.id ne null}" value="#{member.phone}"/>
-                        <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{member.id eq null}"
+                        <h:outputText rendered="#{memberClub.id ne null}" value="#{memberClub.phone}"/>
+                        <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{memberClub.id eq null}"
                                      required="false" id="phone"
                                      value="#{memberBean.tempMember.phone}" validator="#{memberBean.validatePhone}">
                             <f:ajax event="change" execute="@this" render="@form"/>
@@ -73,10 +73,10 @@
                         <f:facet name="header">
                             Birthday
                         </f:facet>
-                        <h:outputText rendered="#{member.id ne null}" value="#{member.birthday}">
+                        <h:outputText rendered="#{memberClub.id ne null}" value="#{memberClub.birthday}">
                             <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
                         </h:outputText>
-                        <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{member.id eq null}"
+                        <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{memberClub.id eq null}"
                                      required="false" id="birthday"
                                      value="#{memberBean.tempMember.birthday}"
                                      converterMessage="Birthday is not provide in dd/MM/yyyy format">
@@ -98,12 +98,12 @@
                                 <f:ajax render="@form"/>
                             </h:commandButton>
                         </f:facet>
-                        <h:selectBooleanCheckbox rendered="#{member.id ne null}"
-                                                 value="#{memberBean.selectedMemberMap[member.id]}">
+                        <h:selectBooleanCheckbox rendered="#{memberClub.id ne null}"
+                                                 value="#{memberBean.selectedMemberMap[memberClub.id]}">
                             <f:ajax execute="@form" render="@form"/>
                         </h:selectBooleanCheckbox>
-                        <h:commandButton rendered="#{member.id ne null}" value="Detail"
-                                         action="#{memberBean.moveToDetailPage(member)}">
+                        <h:commandButton rendered="#{memberClub.id ne null}" value="Detail"
+                                         action="#{memberBean.moveToDetailPage(memberClub)}">
                             <f:ajax render="@all"/>
                         </h:commandButton>
                         <br/>
@@ -156,7 +156,7 @@
                 <br/><br/>
 
                 <h:outputText value="Email: "/>
-                <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{member.id eq null}" required="false"
+                <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{memberClub.id eq null}" required="false"
                              value="#{memberBean.tempMember.email}" validator="#{memberBean.validateEmail}">
                     <f:ajax listener="#{memberBean.update(memberBean.tempMember)}" event="change" execute="@this"
                             render="@all"/>
@@ -165,7 +165,7 @@
                 <br/><br/>
 
                 <h:outputText value="Phone: "/>
-                <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{member.id eq null}" required="false"
+                <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{memberClub.id eq null}" required="false"
                              value="#{memberBean.tempMember.phone}" validator="#{memberBean.validatePhone}">
                     <f:ajax listener="#{memberBean.update(memberBean.tempMember)}" event="change" execute="@this"
                             render="@all"/>
@@ -173,7 +173,7 @@
                 <br/><br/>
 
                 <h:outputText value="Birthday: "/>
-                <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{member.id eq null}" required="false"
+                <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{memberClub.id eq null}" required="false"
                              value="#{memberBean.tempMember.birthday}"
                              converterMessage="Birthday is not provide in dd/MM/yyyy format">
                     <f:convertDateTime pattern="dd/MM/yyyy"/>

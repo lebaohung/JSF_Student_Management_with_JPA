@@ -2,6 +2,7 @@ package com.synergix.repositoty;
 
 import com.synergix.model.Club;
 import com.synergix.model.Member;
+import com.synergix.model.MemberClub;
 
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -58,17 +59,21 @@ public class ClubRepo implements Serializable {
         }
     }
 
-    public void saveMemberIntoClub(Club club, Member member) {
+    public void saveMemberClubIntoClub(Club club, MemberClub member) {
         try {
             em.getTransaction().begin();
-            List<Member> newMembers = club.getMembers();
+            List<MemberClub> newMembers = club.getMemberClubs();
             newMembers.set(newMembers.size() - 1, member);
-            club.setMembers(newMembers);
+            club.setMemberClubs(newMembers);
             em.merge(club);
             em.getTransaction().commit();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Exception " + e.getMessage());
         }
+    }
+
+    public MemberClub getMemberClubById(Integer memberId) {
+        return em.find(MemberClub.class, memberId);
     }
 
     public Member getMemberById(Integer memberId) {
@@ -85,8 +90,8 @@ public class ClubRepo implements Serializable {
         try {
             em.getTransaction().begin();
             Club club = this.getById(clubId);
-            Member member = this.getMemberById(memberId);
-            club.getMembers().remove(member);
+            MemberClub memberClub = this.getMemberClubById(memberId);
+            club.getMemberClubs().remove(memberClub);
             em.merge(club);
             em.getTransaction().commit();
         } catch  (Exception e) {

@@ -49,7 +49,7 @@
                             #{msg.Size}
                         </f:facet>
                         <h:outputText rendered="#{club.id ne null}"
-                                      value="#{club.members.size()}"/>
+                                      value="#{club.memberClubs.size()}"/>
                     </h:column>
 
                     <h:column>
@@ -122,7 +122,7 @@
                 <br/>
 
                 <h:outputText value="#{msg.Size}: "/>
-                <h:outputText value="#{clubBean.middleClub.members.size()}"/>
+                <h:outputText value="#{clubBean.middleClub.memberClubs.size()}"/>
                 <br/>
 
                 <h:outputText value="Mentor: "/>
@@ -139,25 +139,24 @@
 
                 <h:messages id="clubDetail" infoStyle="color: green" errorStyle="color: #c21b1b" layout="table"/>
 
-                <h:dataTable binding="#{memberInClub}" value="#{clubBean.memberListOfClub}"
-                             var="member">
+                <h:dataTable binding="#{memberClubRow}" value="#{clubBean.memberClubsList}" var="memberClub">
                     <h:column>
                         <f:facet name="header">
                             #{msg.No}
                         </f:facet>
-                        <h:outputText value="#{memberInClub.rowIndex + 1}"/>
+                        <h:outputText value="#{memberClubRow.rowIndex + 1}"/>
                     </h:column>
 
                     <h:column>
                         <f:facet name="header">
                             #{msg.MemberID}
                         </f:facet>
-                        <h:outputText rendered="#{member.id ne null}" value="#{member.id}"/>
-                        <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{member.id eq null}"
-                                     p:placeholder="Student ID" value="#{clubBean.middleMember}">
+                        <h:outputText rendered="#{memberClub.id ne null}" value="#{memberClub.member.id}"/>
+                        <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{memberClub.id eq null}"
+                                     p:placeholder="Student ID" value="#{memberClub}">
                             <f:converter binding="#{clubBean.memberIntoClubConverter()}"/>
                             <f:validator binding="#{clubBean.memberIntoClubValidator()}"/>
-                            <f:ajax listener="#{clubBean.saveMemberIntoClub(clubBean.middleClub, clubBean.middleMember)}"
+                            <f:ajax listener="#{clubBean.saveMemberClubIntoClub(clubBean.middleClub, memberClub)}"
                                     event="change" execute="@this" render="@form"/>
                         </h:inputText>
                     </h:column>
@@ -166,18 +165,14 @@
                         <f:facet name="header">
                             #{msg.MemberName}
                         </f:facet>
-                        <h:outputText value="#{member.name}"/>
-                        <h:outputText value="#{clubBean.middleMember.name}"/>
+                        <h:outputText value="#{memberClub.member.name}"/>
                     </h:column>
 
                     <h:column>
                         <f:facet name="header">
                             Birthday
                         </f:facet>
-                        <h:outputText value="#{member.birthday}">
-                            <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
-                        </h:outputText>
-                        <h:outputText value="#{clubBean.middleMember.birthday}">
+                        <h:outputText value="#{memberClub.member.birthday}">
                             <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
                         </h:outputText>
                     </h:column>
@@ -195,8 +190,8 @@
                                 <f:ajax render="@form"/>
                             </h:commandButton>
                         </f:facet>
-                        <h:selectBooleanCheckbox rendered="#{member.id ne null}"
-                                                 value="#{clubBean.selectedMemberMap[member.id]}">
+                        <h:selectBooleanCheckbox rendered="#{memberClub.id ne null}"
+                                                 value="#{clubBean.selectedMemberMap[memberClub.id]}">
                             <f:ajax execute="@form" render="@form"/>
                         </h:selectBooleanCheckbox>
                         <br/>
@@ -210,7 +205,7 @@
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
 
-                <h:commandButton rendered="#{clubBean.middleMember eq null}" value="#{msg.AddMember}"
+                <h:commandButton rendered="#{memberClub.id eq null}" value="#{msg.AddMember}"
                                  action="#{clubBean.createMember}">
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>

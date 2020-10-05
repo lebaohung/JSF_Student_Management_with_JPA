@@ -2,6 +2,7 @@ package com.synergix.controller;
 
 import com.synergix.model.Club;
 import com.synergix.model.Member;
+import com.synergix.model.MemberClub;
 import com.synergix.repositoty.ClubRepo;
 import com.synergix.repositoty.MemberRepo;
 import lombok.Getter;
@@ -47,8 +48,8 @@ public class ClubBean implements Serializable {
     private Club middleClub;
     private Map<Integer, Boolean> selectedClubMap = new HashMap<>();
     private Map<Integer, Boolean> selectedMemberMap = new HashMap<>();
-    private List<Integer> membersIdListOfClub = new ArrayList<>();
-    private List<Member> memberListOfClub = new ArrayList<>();
+    private List<Integer> memberIdList = new ArrayList<>();
+    private List<MemberClub> memberClubsList = new ArrayList<>();
     private List<Club> clubs = new ArrayList<>();
 
     public String getManagerPage() {
@@ -73,7 +74,7 @@ public class ClubBean implements Serializable {
 
     public void create() {
         middleClub = new Club();
-        middleClub.setMembers(new ArrayList<>());
+//        middleClub.setMembers(new ArrayList<>());
         clubs.add(middleClub);
     }
 
@@ -124,8 +125,8 @@ public class ClubBean implements Serializable {
         this.middleClub = club;
         this.middleMember = null;
         this.clearSelectedMemberMap();
-        this.memberListOfClub = this.middleClub.getMembers();
-        this.getMembersIdListOfClub();
+        this.memberClubsList = this.middleClub.getMemberClubs();
+        this.memberIdList = this.getMemberIdList();
         this.navigateClubPage = DETAIL_PAGE;
     }
 
@@ -139,39 +140,39 @@ public class ClubBean implements Serializable {
 
     public void createMember() {
         middleMember = new Member();
-        this.memberListOfClub.add(middleMember);
+        this.memberClubsList.add(new MemberClub());
     }
 
     public void cancelAddMember() {
         this.middleMember = null;
-        this.memberListOfClub.remove(this.memberListOfClub.size() -1);
+        this.memberClubsList.remove(this.memberClubsList.size() -1);
     }
 
     public void updateMentorClub(Club club) {
         clubRepo.updateMentorClub(club);
     }
 
-    public void saveMemberIntoClub(Club club, Member member) {
-        clubRepo.saveMemberIntoClub(club, member);
+    public void saveMemberClubIntoClub(Club club, MemberClub memberClub) {
+        clubRepo.saveMemberClubIntoClub(club, memberClub);
         this.middleMember = null;
-        this.memberListOfClub = club.getMembers();
+        this.memberClubsList = club.getMemberClubs();
     }
 
-    public List<Integer> getMembersIdListOfClub() {
-        return this.memberListOfClub
+    public List<Integer> getMemberIdList() {
+        return this.memberClubsList
                 .stream()
-                .map(Member::getId)
+                .map( item -> item.getMember().getId())
                 .collect(Collectors.toList());
     }
 
     public void selectAllMembers() {
-        for (Integer memberId : this.getMembersIdListOfClub()) {
+        for (Integer memberId : this.memberIdList) {
             selectedMemberMap.put(memberId, true);
         }
     }
 
     public void unselectAllMembers() {
-        for (Integer memberId : this.getMembersIdListOfClub()) {
+        for (Integer memberId : this.memberIdList) {
             selectedMemberMap.put(memberId, false);
         }
     }
@@ -233,10 +234,10 @@ public class ClubBean implements Serializable {
             @Override
             public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
                 Member member = (Member) value;
-                if (value == null || (!member.equals(new Member()) && !memberListOfClub.contains(member))) {
+                if (value == null || (!member.equals(new Member()) && !memberIdList.contains(member.getId()))) {
                     EditableValueHolder editableValueHolder = (EditableValueHolder) component;
                     editableValueHolder.resetValue();
-                    FacesMessage notFoundIdMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, NOT_FOUND_MEMBER, null);
+                    FacesMessage notFoundIdMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "NOT_FOUND_MEMBER", null);
                     throw new ValidatorException(notFoundIdMsg);
                 }
             }
@@ -254,14 +255,14 @@ public class ClubBean implements Serializable {
                 } catch (NumberFormatException e) {
                     return null;
                 }
-                return clubRepo.getMemberById(memberId);
+                return clubRepo.getMemberClubById(memberId);
             }
 
             @Override
             public String getAsString(FacesContext context, UIComponent component, Object value) {
-                Member member = (Member) value;
-                if (member.getId() == null) return null;
-                return member.getId().toString();
+                MemberClub memberClub = (MemberClub) value;
+                if (memberClub.getMember().getId() == null) return null;
+                return memberClub.getMember().getId().toString();
             }
         };
     }
@@ -270,9 +271,10 @@ public class ClubBean implements Serializable {
         return new Validator() {
             @Override
             public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-                Member member = (Member) value;
+                MemberClub memberClub = (MemberClub) value;
+                Member member = clubRepo.getMemberById(memberClub.getMember().getId());
                 List<Member> memberList = memberRepo.getAll();
-                if (value != null && memberListOfClub.contains(member)) {
+                if (value != null && memberClubsList.contains(memberClub)) {
                     cancelAddMember();
                     throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Member existed in club", null));
                 } else if (value == null || !memberList.contains(member)) {
