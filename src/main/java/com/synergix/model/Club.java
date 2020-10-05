@@ -25,9 +25,7 @@ public class Club {
     @JoinColumn(name = "mentor_id")
     private Member mentor;
 
-//    @OneToMany(orphanRemoval = true, cascade = CascadeType.PERSIST)
-//    private List<Member> members;
 
-    @OneToMany(mappedBy = "club")
+    @OneToMany(mappedBy = "club", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<MemberClub> members;
 }
