@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -30,4 +31,8 @@ public class Club {
     @OneToMany(mappedBy = "club", orphanRemoval = true, cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.EXTRA)
     private List<MemberClub> memberClubs;
+
+    public Club() {
+        this.memberClubs = new ArrayList<>();
+    }
 }

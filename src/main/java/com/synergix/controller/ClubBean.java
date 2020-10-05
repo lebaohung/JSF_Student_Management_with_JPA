@@ -138,9 +138,9 @@ public class ClubBean implements Serializable {
         this.selectedMemberMap.clear();
     }
 
-    public void createMember() {
+    public void createMemberClub(Club club) { j
         MemberClub memberClub = new MemberClub();
-        memberClub.setClub(middleClub);
+        memberClub.setClub(club);
         this.memberClubsList.add(memberClub);
     }
 
