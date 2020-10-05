@@ -1,16 +1,12 @@
 package com.synergix.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 
-@Table(name = "member_club")
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
+@Table(name = "member_club")
+@Data
 public class MemberClub {
 
     @Id

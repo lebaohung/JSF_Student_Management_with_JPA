@@ -6,6 +6,7 @@
     <persistence-unit name="com.synergix" >
         <class>com.synergix.model.Member</class>
         <class>com.synergix.model.Club</class>
+        <class>com.synergix.model.MemberClub</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>

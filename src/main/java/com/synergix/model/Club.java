@@ -11,9 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "club")
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 public class Club {
 
     @Id
@@ -27,10 +25,9 @@ public class Club {
     @JoinColumn(name = "mentor_id")
     private Member mentor;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.PERSIST)
-    @JoinTable(name = "member_club", joinColumns = {@JoinColumn(name = "club_id")}, inverseJoinColumns = {@JoinColumn(name = "member_id")})
-    private List<Member> members;
+//    @OneToMany(orphanRemoval = true, cascade = CascadeType.PERSIST)
+//    private List<Member> members;
 
-    @OneToMany
-    private List<MemberClub> memberClubs;
+    @OneToMany(mappedBy = "club")
+    private List<MemberClub> members;
 }
