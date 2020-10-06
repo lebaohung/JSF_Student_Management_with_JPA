@@ -15,6 +15,7 @@ import javax.faces.component.EditableValueHolder;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
@@ -44,10 +45,9 @@ public class ClubBean implements Serializable {
     private static final String NOT_FOUND_MEMBER = "Not Found Member!";
 
     private String navigateClubPage;
-    private Member middleMember;
     private Club middleClub;
     private Map<Integer, Boolean> selectedClubMap = new HashMap<>();
-    private Map<Integer, Boolean> selectedMemberMap = new HashMap<>();
+    private Map<Integer, Boolean> selectedMemberClubMap = new HashMap<>();
     private List<Integer> memberIdList = new ArrayList<>();
     private List<MemberClub> memberClubsList = new ArrayList<>();
     private List<Club> clubs = new ArrayList<>();
@@ -74,13 +74,12 @@ public class ClubBean implements Serializable {
 
     public void create() {
         middleClub = new Club();
-//        middleClub.setMembers(new ArrayList<>());
         clubs.add(middleClub);
     }
 
     public void cancelAdd() {
         this.clearMiddleClub();
-        this.clubs.remove(clubs.size()-1);
+        this.clubs.remove(clubs.size() - 1);
     }
 
     public void clearMiddleClub() {
@@ -123,10 +122,9 @@ public class ClubBean implements Serializable {
 
     public void moveToDetailPage(Club club) {
         this.middleClub = club;
-        this.middleMember = null;
         this.clearSelectedMemberMap();
         this.memberClubsList = this.middleClub.getMemberClubs();
-        this.setMemberIdList();
+        this.memberIdList = this.getMemberIdList();
         this.navigateClubPage = DETAIL_PAGE;
     }
 
@@ -135,49 +133,50 @@ public class ClubBean implements Serializable {
     }
 
     public void clearSelectedMemberMap() {
-        this.selectedMemberMap.clear();
+        this.selectedMemberClubMap.clear();
     }
 
-    public void createMemberClub(Club club) { j
+    public void createMemberClub(Club club) {
         MemberClub memberClub = new MemberClub();
         memberClub.setClub(club);
         this.memberClubsList.add(memberClub);
     }
 
     public void cancelAddMember() {
-        this.memberClubsList.remove(this.memberClubsList.size() -1);
+        this.memberClubsList.remove(this.memberClubsList.size() - 1);
     }
 
     public void updateMentorClub(Club club) {
-        clubRepo.updateMentorClub(club);
+        clubRepo.update(club);
     }
 
     public void saveMemberClubIntoClub(Club club) {
-        clubRepo.saveMemberClubIntoClub(club);
+        clubRepo.update(club);
         this.memberClubsList = club.getMemberClubs();
+        this.memberIdList = this.getMemberIdList();
     }
 
-    public void setMemberIdList() {
-        this.memberIdList =  this.memberClubsList
+    public List<Integer> getMemberIdList() {
+        return this.memberClubsList
                 .stream()
                 .map(item -> item.getMember().getId())
                 .collect(Collectors.toList());
     }
 
-    public void selectAllMembers() {
-        for (Integer memberId : this.memberIdList) {
-            selectedMemberMap.put(memberId, true);
+    public void selectAllMemberClub() {
+        for (MemberClub memberClub : this.memberClubsList) {
+            selectedMemberClubMap.put(memberClub.getId(), true);
         }
     }
 
-    public void unselectAllMembers() {
-        for (Integer memberId : this.memberIdList) {
-            selectedMemberMap.put(memberId, false);
+    public void unselectAllMemberClub() {
+        for (MemberClub memberClub : this.memberClubsList) {
+            selectedMemberClubMap.put(memberClub.getId(), false);
         }
     }
 
-    public List<Integer> getSelectedMembersId() {
-        return this.selectedMemberMap.entrySet()
+    public List<Integer> getSelectedMemberClubId() {
+        return this.selectedMemberClubMap.entrySet()
                 .stream()
                 .filter(Map.Entry::getValue)
                 .map(Map.Entry::getKey)
@@ -185,8 +184,8 @@ public class ClubBean implements Serializable {
     }
 
     public void deleteSelectedMember(Club club) {
-        for (Integer memberId : this.getSelectedMembersId()) {
-            clubRepo.deleteMemberInClub(club.getId(), memberId);
+        for (Integer memberClubId : this.getSelectedMemberClubId()) {
+            clubRepo.deleteMemberClubInClub(club, memberClubId);
         }
         this.moveToDetailPage(club);
     }
@@ -210,19 +209,29 @@ public class ClubBean implements Serializable {
             @Override
             public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
                 Integer mentorId = null;
-                if (s.isEmpty() || s == null) return new Member();
+                if (s.isEmpty() || s == null) return null;
                 try {
                     mentorId = Integer.parseInt(s);
                 } catch (NumberFormatException e) {
-                    return null;
+                    EditableValueHolder editableValueHolder = (EditableValueHolder) uiComponent;
+                    editableValueHolder.resetValue();
+                    FacesMessage notValidMemberId = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not valid member ID!", null);
+                    throw new ConverterException((notValidMemberId));
                 }
-                return clubRepo.getMemberById(mentorId);
+                Member member = clubRepo.getMemberById(mentorId);
+                if (member == null) {
+                    EditableValueHolder editableValueHolder = (EditableValueHolder) uiComponent;
+                    editableValueHolder.resetValue();
+                    FacesMessage cannotConvertToMember = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot convert to member!", null);
+                    throw new ConverterException((cannotConvertToMember));
+                }
+                return member;
             }
 
             @Override
             public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object o) {
                 Member mentor = (Member) o;
-                if (mentor.getId() == null) return null;
+                if (mentor == null) return null;
                 return ((Member) o).getId().toString();
             }
         };
@@ -233,10 +242,10 @@ public class ClubBean implements Serializable {
             @Override
             public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
                 Member member = (Member) value;
-                if (value == null || (!member.equals(new Member()) && !memberIdList.contains(member.getId()))) {
+                if (value != null && !memberIdList.contains(member.getId())) {
                     EditableValueHolder editableValueHolder = (EditableValueHolder) component;
                     editableValueHolder.resetValue();
-                    FacesMessage notFoundIdMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "NOT_FOUND_MEMBER", null);
+                    FacesMessage notFoundIdMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, NOT_FOUND_MEMBER, null);
                     throw new ValidatorException(notFoundIdMsg);
                 }
             }
@@ -260,7 +269,7 @@ public class ClubBean implements Serializable {
             @Override
             public String getAsString(FacesContext context, UIComponent component, Object value) {
                 Member member = (Member) value;
-                if (member == null ) return null;
+                if (member == null) return null;
                 return member.getId().toString();
             }
         };
@@ -290,7 +299,7 @@ public class ClubBean implements Serializable {
                 s = s.toLowerCase();
                 StringBuilder value2 = new StringBuilder();
                 Character ch = ' ';
-                for (int i = 0; i < s.length(); i ++) {
+                for (int i = 0; i < s.length(); i++) {
                     if (ch == ' ' && s.charAt(i) != ' ') {
                         value2.append(Character.toUpperCase(s.charAt(i)));
                     } else {

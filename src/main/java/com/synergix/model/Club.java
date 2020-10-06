@@ -32,7 +32,4 @@ public class Club {
     @LazyCollection(LazyCollectionOption.EXTRA)
     private List<MemberClub> memberClubs;
 
-    public Club() {
-        this.memberClubs = new ArrayList<>();
-    }
 }

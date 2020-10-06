@@ -59,35 +59,18 @@ public class ClubRepo implements Serializable {
         }
     }
 
-    public void saveMemberClubIntoClub(Club club) {
-        try {
-            em.getTransaction().begin();
-            em.merge(club);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Exception " + e.getMessage());
-        }
-    }
-
-    public MemberClub getMemberClubById(Integer memberId) {
-        return em.find(MemberClub.class, memberId);
+    public MemberClub getMemberClubByMemberClubId(Integer memberClubId) {
+        return em.find(MemberClub.class, memberClubId);
     }
 
     public Member getMemberById(Integer memberId) {
         return em.find(Member.class, memberId);
     }
 
-    public void updateMentorClub(Club club) {
-        em.getTransaction().begin();
-        em.merge(club);
-        em.getTransaction().commit();
-    }
-
-    public void deleteMemberInClub(Integer clubId, Integer memberId) {
+    public void deleteMemberClubInClub(Club club, Integer memberClubId) {
         try {
             em.getTransaction().begin();
-            Club club = this.getById(clubId);
-            MemberClub memberClub = this.getMemberClubById(memberId);
+            MemberClub memberClub = this.getMemberClubByMemberClubId(memberClubId);
             club.getMemberClubs().remove(memberClub);
             em.merge(club);
             em.getTransaction().commit();

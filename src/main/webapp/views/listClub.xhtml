@@ -180,18 +180,18 @@
                     <h:column>
                         <f:facet name="header">
                             <h:commandButton
-                                    rendered="#{clubBean.selectedMemberMap.isEmpty() or clubBean.selectedMemberMap.containsValue(false)}"
-                                    value="Select All" action="#{clubBean.selectAllMembers()}">
+                                    rendered="#{clubBean.selectedMemberClubMap.isEmpty() or clubBean.selectedMemberClubMap.containsValue(false)}"
+                                    value="Select All" action="#{clubBean.selectAllMemberClub()}">
                                 <f:ajax render="@form"/>
                             </h:commandButton>
                             <h:commandButton
-                                    rendered="#{!clubBean.selectedMemberMap.isEmpty() and !clubBean.selectedMemberMap.containsValue(false)}"
-                                    value="Unselect All" action="#{clubBean.unselectAllMembers()}">
+                                    rendered="#{!clubBean.selectedMemberClubMap.isEmpty() and !clubBean.selectedMemberClubMap.containsValue(false)}"
+                                    value="Unselect All" action="#{clubBean.unselectAllMemberClub()}">
                                 <f:ajax render="@form"/>
                             </h:commandButton>
                         </f:facet>
                         <h:selectBooleanCheckbox rendered="#{memberClub.id ne null}"
-                                                 value="#{clubBean.selectedMemberMap[memberClub.id]}">
+                                                 value="#{clubBean.selectedMemberClubMap[memberClub.id]}">
                             <f:ajax execute="@form" render="@form"/>
                         </h:selectBooleanCheckbox>
                         <br/>
@@ -199,7 +199,7 @@
                 </h:dataTable>
 
                 <h:commandButton value="Delete selected"
-                                 disabled="#{!clubBean.selectedMemberMap.containsValue(true)}"
+                                 disabled="#{!clubBean.selectedMemberClubMap.containsValue(true)}"
                                  action="#{clubBean.deleteSelectedMember(clubBean.middleClub)}"
                                  onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
                     <f:ajax execute="@form" render="@form"/>
