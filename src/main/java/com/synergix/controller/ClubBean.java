@@ -45,12 +45,12 @@ public class ClubBean implements Serializable {
     private static final String NOT_FOUND_MEMBER = "Not Found Member!";
 
     private String navigateClubPage;
-    private Club middleClub;
+    private transient Club middleClub;
     private Map<Integer, Boolean> selectedClubMap = new HashMap<>();
     private Map<Integer, Boolean> selectedMemberClubMap = new HashMap<>();
     private List<Integer> memberIdList = new ArrayList<>();
-    private List<MemberClub> memberClubsList = new ArrayList<>();
-    private List<Club> clubs = new ArrayList<>();
+    private transient List<MemberClub> memberClubsList = new ArrayList<>();
+    private transient List<Club> clubs = new ArrayList<>();
 
     public String getManagerPage() {
         return MANAGER_PAGE;

@@ -39,9 +39,9 @@ public class MemberBean implements Serializable {
     private static final String PHONE_REGEX = "^0\\d{9}$";
 
     private String navigateMemberPage;
-    private List<Member> members = new ArrayList<>();
+    private transient List<Member> members = new ArrayList<>();
     private Map<Integer, Boolean> selectedMemberMap = new HashMap<>();
-    private Member tempMember;
+    private transient Member tempMember;
 
     public String getManagerPage() {
         return MANAGER_PAGE;
@@ -78,7 +78,7 @@ public class MemberBean implements Serializable {
 
     public void save(Member member) {
         if (!memberRepo.save(member)) {
-            Logger.getAnonymousLogger().log(Level.SEVERE, "Cannot save member ID " + member.getId());
+            Logger.getAnonymousLogger().log(Level.SEVERE, () -> "Cannot save member ID " + member.getId());
         }
         this.clearTempMember();
         this.getAll();

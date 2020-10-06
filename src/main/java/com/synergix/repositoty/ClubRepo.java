@@ -34,7 +34,7 @@ public class ClubRepo implements Serializable {
             em.persist(club);
             em.getTransaction().commit();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Exception " + e.getMessage());
+            logger.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -44,7 +44,7 @@ public class ClubRepo implements Serializable {
             em.merge(club);
             em.getTransaction().commit();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Exception " + e.getMessage());
+            logger.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -55,7 +55,7 @@ public class ClubRepo implements Serializable {
             em.remove(club);
             em.getTransaction().commit();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Exception " + e.getMessage());
+            logger.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -75,7 +75,7 @@ public class ClubRepo implements Serializable {
             em.merge(club);
             em.getTransaction().commit();
         } catch  (Exception e) {
-            logger.log(Level.SEVERE, "Exception " + e.getMessage());
+            logger.log(Level.SEVERE, e.getMessage());
         }
     }
 }
